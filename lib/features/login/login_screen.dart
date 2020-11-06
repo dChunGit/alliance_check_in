@@ -1,3 +1,4 @@
+import 'package:alliance_tech_check_in/config/constants.dart';
 import 'package:alliance_tech_check_in/config/enums.dart';
 import 'package:alliance_tech_check_in/config/theme.dart';
 import 'package:alliance_tech_check_in/generated/i18n.dart';
@@ -272,7 +273,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
         builder: (context) {
           return GestureDetector(
             onTap: () {
-              // showMessageDialog(context, S.of(context).skipLogin, S.of(context).skipMessage, this);
+              _launchHomeScreen();
             },
             child: Padding(
                 padding: EdgeInsets.all(8),
@@ -344,7 +345,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
         onTap: () {
           authService.signInWithGoogle().then((token) {
             if (token.token != null) {
-              _saveUserLaunchHomeScreen();
+              _launchHomeScreen();
             }
           });
         },
@@ -495,15 +496,15 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
 
   void _validateToken(BuildContext context, IdTokenResult token) {
     if (token != null) {
-      _saveUserLaunchHomeScreen();
+      _launchHomeScreen();
     }
     else {
       textSnackBar(context, S.of(context).invalidCredentials);
     }
   }
 
-  void _saveUserLaunchHomeScreen() {
-    Navigator.pushReplacementNamed(context, '/home');
+  void _launchHomeScreen() {
+    Navigator.pushReplacementNamed(context, surveyScreen);
   }
 
   void _onRememberMeChanged(bool newValue) => setState(() {

@@ -8,3 +8,7 @@ enum BuildType {
   debug,
   prod
 }
+
+
+const String loginScreen = "/login";
+const String surveyScreen = "/survey";

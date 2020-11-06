@@ -87,7 +87,7 @@ class S {
   }
 
   String get skipLogin {
-    return Intl.message("Use without logging in", name: 'skipLogin');
+    return Intl.message("Enter as guest", name: 'skipLogin');
   }
 
   String get skipMessage {

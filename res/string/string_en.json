@@ -15,7 +15,7 @@
   "continueButton": "Continue",
   "registerButton": "Register",
   "resetButton": "Reset",
-  "skipLogin": "Use without logging in",
+  "skipLogin": "Enter as guest",
   "skipMessage": "Heads up, we won't be able sync or transfer your data to a different device if you don't log in.",
   "resetMessage": "Sending reset email...",
   "logged_out": "You have been logged out, please log in again",

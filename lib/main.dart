@@ -39,8 +39,8 @@ class AllianceApp extends StatelessWidget {
       supportedLocales: S.delegate.supportedLocales,
       onGenerateRoute: (settings) {
         switch(settings.name) {
-          case '/login': return SlideRightTransition(page: LoginScreen());
-          case '/survey': return SlideRightTransition(page: SurveyScreen());
+          case loginScreen: return SlideRightTransition(page: LoginScreen());
+          case surveyScreen: return SlideLeftTransition(page: SurveyScreen());
         }
 
         return MultiPurposeRoute(exitPage: context.widget, enterPage: SurveyScreen());

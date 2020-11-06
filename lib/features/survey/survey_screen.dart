@@ -1,3 +1,4 @@
+import 'package:alliance_tech_check_in/config/constants.dart';
 import 'package:alliance_tech_check_in/config/theme.dart';
 import 'package:alliance_tech_check_in/features/common/custom_header_bar.dart';
 import 'package:alliance_tech_check_in/locator.dart';
@@ -60,7 +61,7 @@ class _SurveyScreenState extends State<SurveyScreen> {
                           ],
                         ),
                         onTap: () {
-                          Navigator.pushNamed(context, '/home');
+                          Navigator.pushNamed(context, surveyScreen);
                         },
                       ),
                       Image(

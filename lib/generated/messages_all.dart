@@ -28,7 +28,7 @@ class $en extends MessageLookupByLibrary {
 		"continueButton" : MessageLookupByLibrary.simpleMessage("Continue"),
 		"registerButton" : MessageLookupByLibrary.simpleMessage("Register"),
 		"resetButton" : MessageLookupByLibrary.simpleMessage("Reset"),
-		"skipLogin" : MessageLookupByLibrary.simpleMessage("Use without logging in"),
+		"skipLogin" : MessageLookupByLibrary.simpleMessage("Enter as guest"),
 		"skipMessage" : MessageLookupByLibrary.simpleMessage("Heads up, we won't be able sync or transfer your data to a different device if you don't log in."),
 		"resetMessage" : MessageLookupByLibrary.simpleMessage("Sending reset email..."),
 		"logged_out" : MessageLookupByLibrary.simpleMessage("You have been logged out, please log in again"),
