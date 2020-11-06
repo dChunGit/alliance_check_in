@@ -1,5 +1,6 @@
 import 'package:alliance_tech_check_in/features/login/login_screen.dart';
 import 'package:alliance_tech_check_in/features/survey/survey_screen.dart';
+import 'package:alliance_tech_check_in/generated/i18n.dart';
 import 'package:alliance_tech_check_in/utils/transitions/slide_route_transition.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -29,9 +30,13 @@ class AllianceApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "HiPR App",
+      title: "Alliance Tech",
       theme: AllianceTheme.of(context),
       home: defaultHome,
+      localizationsDelegates: [
+        S.delegate
+      ],
+      supportedLocales: S.delegate.supportedLocales,
       onGenerateRoute: (settings) {
         switch(settings.name) {
           case '/login': return SlideRightTransition(page: LoginScreen());
