@@ -19,6 +19,8 @@ void main() async {
     _defaultHome = SurveyScreen();
   }
 
+  _defaultHome = SurveyScreen();
+
   runApp(AllianceApp(defaultHome: _defaultHome,));
 }
 
