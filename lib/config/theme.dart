@@ -82,7 +82,7 @@ class AllianceTheme {
             color: AppColors.lightTextColor,
             fontSize: 48),
         headline3: theme.textTheme.headline3.copyWith(
-            color: AppColors.darkTextColor,
+            color: AppColors.lightTextColor,
             fontWeight: FontWeight.w400),
         headline4: theme.textTheme.headline4.copyWith(
             color: AppColors.lightTextColor,
@@ -90,7 +90,7 @@ class AllianceTheme {
             fontWeight: FontWeight.w600),
         headline5: theme.textTheme.headline5.copyWith(
             fontSize: 18,
-            color: AppColors.darkTextColor,
+            color: AppColors.lightTextColor,
             fontWeight: FontWeight.w900),
         headline6: theme.textTheme.headline6.copyWith(
             fontSize: 16,

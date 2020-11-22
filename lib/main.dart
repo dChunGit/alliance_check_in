@@ -1,4 +1,3 @@
-import 'package:alliance_tech_check_in/features/login/login_screen.dart';
 import 'package:alliance_tech_check_in/features/survey/survey_screen.dart';
 import 'package:alliance_tech_check_in/generated/i18n.dart';
 import 'package:alliance_tech_check_in/utils/transitions/slide_route_transition.dart';
@@ -12,16 +11,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await service_locator.init();
-  var sharedPreferences = service_locator.sl.get<SharedPreferences>();
 
-  Widget _defaultHome = LoginScreen();
-  if (sharedPreferences.getBool(loginStateKey) ?? false) {
-    _defaultHome = SurveyScreen();
-  }
-
-  _defaultHome = SurveyScreen();
-
-  runApp(AllianceApp(defaultHome: _defaultHome,));
+  runApp(AllianceApp(defaultHome: SurveyScreen(),));
 }
 
 class AllianceApp extends StatelessWidget {
@@ -41,7 +32,6 @@ class AllianceApp extends StatelessWidget {
       supportedLocales: S.delegate.supportedLocales,
       onGenerateRoute: (settings) {
         switch(settings.name) {
-          case loginScreen: return SlideRightTransition(page: LoginScreen());
           case surveyScreen: return SlideLeftTransition(page: SurveyScreen());
         }
 
