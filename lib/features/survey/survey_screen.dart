@@ -25,8 +25,9 @@ class SurveyScreen extends StatefulWidget {
 }
 
 class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMixin {
-  TextEditingController _firstNameController = TextEditingController();
-  TextEditingController _lastNameController = TextEditingController();
+  TextEditingController _firstNameController;
+  TextEditingController _lastNameController;
+  TextEditingController _temperatureController = TextEditingController();
   ScrollController _scrollController = ScrollController();
 
   Map<int, bool> _responses = Map<int, bool>();
@@ -34,9 +35,11 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
   DateTime _exposedDate;
 
   AnimationController _tempController;
+  AnimationController _dateController;
   AnimationController _exposureController;
   AnimationController _resetController;
   Animation _tempAnimation;
+  Animation _dateAnimation;
   Animation _exposureAnimation;
   Animation _resetAnimation;
 
@@ -56,6 +59,12 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
     );
     _tempAnimation = CurvedAnimation(parent: _tempController, curve: Curves.fastOutSlowIn);
 
+    _dateController = AnimationController(
+        duration: _animationDuration,
+        vsync: this
+    );
+    _dateAnimation = CurvedAnimation(parent: _dateController, curve: Curves.fastOutSlowIn);
+
     _exposureController = AnimationController(
         duration: _animationDuration,
         vsync: this
@@ -68,17 +77,25 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
         vsync: this
     );
     _resetAnimation = CurvedAnimation(parent: _resetController, curve: Curves.fastOutSlowIn);
+
+
+    var firstName = widget.sharedPrefs.getString(firstNameKey);
+    var lastName = widget.sharedPrefs.getString(lastNameKey);
+    _firstNameController = TextEditingController(text: firstName);
+    _lastNameController = TextEditingController(text: lastName);
   }
 
   @override
   void dispose() {
     super.dispose();
     _tempController.dispose();
+    _dateController.dispose();
     _exposureController.dispose();
     _resetController.dispose();
     _scrollController.dispose();
     _firstNameController.dispose();
     _lastNameController.dispose();
+    _temperatureController.dispose();
 
     _infoAnimationControllers.forEach((key, value) {
       value.first.dispose();
@@ -174,9 +191,10 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
                             onTap: () {
                               //submit here
                               var exposureDateInvalid = _responses[1] && _exposedDate == null;
-                              if (_formKey.currentState.validate() && !exposureDateInvalid) {
+                              var temp = _temperatureController.text;
+                              if (_formKey.currentState.validate() && !exposureDateInvalid && temp.isNotEmpty) {
                                 _tempController.reverse();
-                                // _resetController.forward();
+                                _dateController.reverse();
 
                                 var maxScroll = _scrollController.position.maxScrollExtent;
                                 if (maxScroll - _scrollController.position.pixels <= 25) {
@@ -190,7 +208,14 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
                                 }
                               }
                               else {
-                                _tempController.forward();
+                                if (temp.isEmpty) {
+                                  _tempController.forward();
+                                }
+
+                                if (exposureDateInvalid) {
+                                  print("Exposure date invalid $_exposedDate}");
+                                  _dateController.forward();
+                                }
                                 Scaffold.of(context).showSnackBar(SnackBar(content: Text(S.of(context).responseEmpty)));
                               }
                             },
@@ -206,15 +231,6 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
   }
 
   Widget _createPersonalInfo() {
-    var firstName = widget.sharedPrefs.getString(firstNameKey);
-    var lastName = widget.sharedPrefs.getString(lastNameKey);
-
-    if (firstName != null && lastName != null) {
-      print("Name $firstName $lastName");
-      _firstNameController.text = firstName;
-      _lastNameController.text = lastName;
-    }
-
     return Padding(
         padding: EdgeInsets.fromLTRB(16, 8, 16, 2),
         child: Form(
@@ -256,6 +272,7 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
                     child: Padding(
                       padding: const EdgeInsets.only(right: 8),
                       child: TextFormField(
+                        controller: _temperatureController,
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
                           border: InputBorder.none,
@@ -294,7 +311,7 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
   }
 
   Widget _createQuestion(int index, String text, {String info = "", bool showOnFirst = false, bool showDatePicker = false, bool dateRequired = false}) {
-    _responses.putIfAbsent(index, () => false);
+    _responses.putIfAbsent(index, () => true);
     _moreInfoState.putIfAbsent(index, () => showOnFirst ? InfoState.FIRST : InfoState.HIDDEN);
 
     return Padding(
@@ -314,7 +331,7 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
                     child: _createQuestionDetails(index, text, info, showDatePicker),
                   )
               ),
-              ToggleSelectionButton((value) {
+              ToggleSelectionButton(_responses[index], (value) {
                 setState(() {
                   if (dateRequired) {
                     value ? _exposureController.forward() : _exposureController.reverse();
@@ -451,7 +468,7 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
                 ),
               ),
               SizeTransition(
-                sizeFactor: _tempAnimation,
+                sizeFactor: _dateAnimation,
                 child: Text(
                   S.of(context).responseError,
                   style: Theme.of(context).textTheme.headline5.smaller(8).setColor(AppColors.error),

@@ -7,15 +7,27 @@ import 'package:alliance_tech_check_in/utils/extensions/text_ext.dart';
 
 class ToggleSelectionButton extends StatefulWidget {
   final Function(bool) callback;
+  final bool initialValue;
 
-  ToggleSelectionButton(this.callback);
+  ToggleSelectionButton(this.initialValue, this.callback);
 
   @override
   _ToggleSelectionButtonState createState() => _ToggleSelectionButtonState();
 }
 
 class _ToggleSelectionButtonState extends State<ToggleSelectionButton> {
-  bool _choice = true;
+  bool _choice = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      setState(() {
+        _choice = widget.initialValue;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
