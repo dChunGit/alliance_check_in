@@ -14,11 +14,26 @@ class $en extends MessageLookupByLibrary {
   
   final messages = {
 		"title" : MessageLookupByLibrary.simpleMessage("Alliance Technologies"),
+		"checkIn" : (date) => "Check In For ${date}",
+		"firstName" : MessageLookupByLibrary.simpleMessage("First name"),
+		"lastName" : MessageLookupByLibrary.simpleMessage("Last name"),
+		"questionHeader" : (number) => "Question ${number}",
 		"question1" : MessageLookupByLibrary.simpleMessage("Have you been in close contact with someone diagnosed with COVID-19?"),
 		"question2" : MessageLookupByLibrary.simpleMessage("To your knowledge, have you been exposed to the coronavirus which causes COVID-19?"),
-		"question3" : MessageLookupByLibrary.simpleMessage("Are you currently experiencing any of the following symptoms or have you experienced any of them in the last 24 hours:"),
-		"question1Details" : MessageLookupByLibrary.simpleMessage("The Centers for DiseaseControl (CDC) defines close contact as being within approximately 6 feet(2 meters) of a person with COVID-19 for a prolonged period of time (greater than 10 – 15 minutes). Examples include: caring for, living with a family member/friend or sharing a healthcare waiting area or room, or having direct contact with infectious secretions of a person with COVID-19 (such as being coughed or sneezed on)."),
-		"question3Details" : MessageLookupByLibrary.simpleMessage("Cough, Fever, Chills, Repeated Shaking with Chills, Shortness of breath, Difficulty breathing, Muscle pains, Headache, Sore throat, New loss of taste or smell?"),
+		"question3" : MessageLookupByLibrary.simpleMessage("Are you currently experiencing any of the following symptoms or have you experienced any of them in the last 24 hours?"),
+		"question1Details" : MessageLookupByLibrary.simpleMessage("The Centers for Disease Control (CDC) defines close contact as being within approximately 6 feet (2 meters) of a person with COVID-19 for a prolonged period of time (greater than 10–15 minutes). Examples include: caring for, living with a family member/friend or sharing a healthcare waiting area or room, or having direct contact with infectious secretions of a person with COVID-19 (such as being coughed or sneezed on)."),
+		"question3Details" : MessageLookupByLibrary.simpleMessage("Cough, Fever, Chills, Repeated Shaking with Chills, Shortness of breath, Difficulty breathing, Muscle pains, Headache, Sore throat, New loss of taste or smell"),
+		"disclaimer" : MessageLookupByLibrary.simpleMessage("By signing in to our facility, you are acknowledging that an inherent risk of exposure to COVID-19 exists in any public space where people are present, and you are voluntarily assuming all related risks and agree not to hold Alliance Technologies, its officers, or agents liable for any illness or injury."),
+		"currentTemp" : MessageLookupByLibrary.simpleMessage("Current Temperature:"),
+		"tempHint" : MessageLookupByLibrary.simpleMessage("--"),
+		"selectExposureDate" : MessageLookupByLibrary.simpleMessage("Select Exposure Date"),
+		"submit" : MessageLookupByLibrary.simpleMessage("SUBMIT"),
+		"moreInfo" : MessageLookupByLibrary.simpleMessage("MORE INFO"),
+		"hideInfo" : MessageLookupByLibrary.simpleMessage("HIDE INFO"),
+		"responseError" : MessageLookupByLibrary.simpleMessage("Response required"),
+		"responseEmpty" : MessageLookupByLibrary.simpleMessage("Some responses were left empty"),
+		"yes" : MessageLookupByLibrary.simpleMessage("YES"),
+		"no" : MessageLookupByLibrary.simpleMessage("NO"),
 
   };
 }

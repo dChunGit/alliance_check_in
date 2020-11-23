@@ -1,7 +1,5 @@
 import 'package:alliance_tech_check_in/repositories/api/api_repository.dart';
 import 'package:alliance_tech_check_in/repositories/api/api_repository_impl.dart';
-import 'package:alliance_tech_check_in/repositories/auth/auth_repository.dart';
-import 'package:alliance_tech_check_in/repositories/auth/auth_repository_impl.dart';
 import 'package:alliance_tech_check_in/repositories/network/network_status.dart';
 import 'package:alliance_tech_check_in/repositories/network/network_status_impl.dart';
 import 'package:data_connection_checker/data_connection_checker.dart';
@@ -14,11 +12,6 @@ final sl = GetIt.instance;
 
 Future<void> init() async {
   sl.registerLazySingleton<NetworkStatus>(() => NetworkStatusImpl(DataConnectionChecker()));
-
-  sl.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl());
-  sl.registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance);
-  sl.registerLazySingleton<GoogleSignIn>(() => GoogleSignIn());
-
 
   SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);

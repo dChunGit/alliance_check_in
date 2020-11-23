@@ -1,7 +1,5 @@
-enum LoginState {
-  NONE,
-  LOGIN,
-  REGISTER,
-  RESET,
-  LOGOUT
+enum InfoState {
+  HIDDEN,
+  SHOWN,
+  FIRST
 }

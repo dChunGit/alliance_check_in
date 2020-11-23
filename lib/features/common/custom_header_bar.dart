@@ -18,7 +18,7 @@ class CustomHeaderBar extends PreferredSize {
     return Container(
       height: preferredSize.height,
       color: AppColors.headerColor,
-      alignment: Alignment.centerLeft,
+      alignment: Alignment.center,
       child: child,
     );
   }

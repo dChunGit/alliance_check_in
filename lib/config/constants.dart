@@ -1,4 +1,5 @@
-const String loginStateKey = "loginState";
+const String firstNameKey = "firstName";
+const String lastNameKey = "lastName";
 
 const String apiUrl = "test";
 

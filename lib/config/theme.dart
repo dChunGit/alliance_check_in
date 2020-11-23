@@ -20,47 +20,27 @@ class AppSizes {
 }
 
 class AppColors {
-  static const primaryColor = Color(0xFF0080ff);
+  static const primaryColor = Color(0xFF3c78af);
   static const darkTextColor = Color(0xFFF7F4F3);
   static const lightTextColor = Color(0xFF0b1a2b);
   static const darkTextColorAccent = Color(0xFFEAF2EF);
 
   static const backgroundColor = Color(0xFF153151);
   static const backgroundLight = Color(0xFFF9F9F9);
-  static const backgroundOutline = Color(0xFF9B9B9B);
   static const accent = Color(0xFF3399ff);
-  static const icons = Color(0xFFEAF2EF);
-  static const iconsAlt = Color(0xFF222222);
 
-  static const headerColor = Color(0xFF0b1a2b);
-  static const defaultStatusBarColor = Color(0xFFFFFFFF);
-  static const tintedStatusBarColor = Color(0xAA9B9B9B);
+  static const toggleSelected = primaryColor;
+  static const toggleDeselected = Color(0xDD9B9B9B);
 
-  static const headline = Color(0xFF005b96);
-  static const headlineAlt = Color(0xffffa070);
-  static const headlineAlt2 = Color(0xFF0b1a2b);
-  static const headlineAlt3 = Color(0xFF4d4d4d);
-  static const emailChip = Color(0xFF153151);
+  static const headerColor = Color(0xFF00558c);
+
+  static const headline = Color(0xFF4d4d4d);
 
   // Status colors
-  static const goodStatus = Color(0xFF005b96);
-  static const okStatus = Color(0xffffa070);
-  static const badStatus = Color(0xFFe54b4b);
-  static const error = okStatus;
-  static const info = Color(0xFFffb691);
+  static const error = Color(0xffF58232);
 
   // Misc colors
   static const toastColor = Color(0xDD9B9B9B);
-
-  static const red = Color(0xFFDB3022);
-  static const black = Color(0xFF222222);
-  static const lightGray = Color(0xFF9B9B9B);
-  static const darkGray = Color(0xFF979797);
-  static const white = Color(0xFFFFFFFF);
-  static const orange = Color(0xFFFFBA49);
-  static const transparent = Color(0x00000000);
-  static const success = Color(0xFF2AA952);
-  static const green = Color(0xFF2AA952);
 }
 
 class AllianceTheme {
@@ -68,14 +48,14 @@ class AllianceTheme {
     var theme = Theme.of(context);
     return theme.copyWith(
       primaryColor: AppColors.primaryColor,
-      primaryColorLight: AppColors.lightGray,
+      primaryColorLight: AppColors.lightTextColor,
       accentColor: AppColors.accent,
       backgroundColor: AppColors.backgroundColor,
-      errorColor: AppColors.red,
+      errorColor: AppColors.error,
       brightness: Brightness.light,
       visualDensity: VisualDensity.adaptivePlatformDensity,
 
-      textTheme: GoogleFonts.latoTextTheme(theme.textTheme.copyWith(
+      textTheme: GoogleFonts.karlaTextTheme(theme.textTheme.copyWith(
         headline1: theme.textTheme.headline1.copyWith(
             fontWeight: FontWeight.w500),
         headline2: theme.textTheme.headline2.copyWith(
@@ -99,11 +79,11 @@ class AllianceTheme {
 
         subtitle1: theme.textTheme.subtitle1.copyWith(
             fontSize: 24,
-            color: AppColors.white,
+            color: AppColors.lightTextColor,
             fontWeight: FontWeight.w500),
         subtitle2: theme.textTheme.subtitle2.copyWith(
             fontSize: 18,
-            color: AppColors.white,
+            color: AppColors.lightTextColor,
             fontWeight: FontWeight.w400),
 
         button: theme.textTheme.button.copyWith(
@@ -112,17 +92,17 @@ class AllianceTheme {
             fontWeight: FontWeight.w500),
 
         caption: theme.textTheme.caption.copyWith(
-            fontSize: 34,
-            color: AppColors.black,
-            fontWeight: FontWeight.w700),
+            fontSize: 16,
+            color: AppColors.lightTextColor,
+            fontWeight: FontWeight.normal),
 
 
         bodyText1: theme.textTheme.bodyText1.copyWith(
-            color: AppColors.black,
+            color: AppColors.lightTextColor,
             fontSize: 11,
             fontWeight: FontWeight.w400),
         bodyText2: theme.textTheme.bodyText2.copyWith(
-            color: AppColors.lightGray,
+            color: AppColors.lightTextColor,
             fontSize: 11,
             fontWeight: FontWeight.normal),
       )),

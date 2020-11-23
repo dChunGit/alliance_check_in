@@ -1,3 +1,5 @@
+import 'package:alliance_tech_check_in/config/theme.dart';
+import 'package:alliance_tech_check_in/generated/i18n.dart';
 import 'package:alliance_tech_check_in/utils/pair.dart';
 import 'package:flutter/material.dart';
 import 'package:alliance_tech_check_in/utils/extensions/text_ext.dart';
@@ -13,15 +15,18 @@ class ToggleSelectionButton extends StatefulWidget {
 }
 
 class _ToggleSelectionButtonState extends State<ToggleSelectionButton> {
-  bool _choice = false;
+  bool _choice = true;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        _createButton("NO", false),
-        _createButton("YES", true)
-      ],
+    return IntrinsicWidth(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _createButton(S.of(context).yes, true),
+          _createButton(S.of(context).no, false),
+        ],
+      ),
     );
   }
 
@@ -54,10 +59,10 @@ class _ToggleSelectionButtonState extends State<ToggleSelectionButton> {
 
   Pair _getColorPair(bool value) {
     if (value) {
-      return Pair(Colors.blue, Colors.pink);
+      return Pair(AppColors.toggleSelected, AppColors.toggleDeselected);
     }
     else {
-      return Pair(Colors.pink, Colors.blue);
+      return Pair(AppColors.toggleDeselected, AppColors.toggleSelected);
     }
   }
 }

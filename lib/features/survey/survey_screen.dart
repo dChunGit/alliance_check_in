@@ -1,35 +1,88 @@
+import 'package:alliance_tech_check_in/config/constants.dart';
+import 'package:alliance_tech_check_in/config/enums.dart';
 import 'package:alliance_tech_check_in/config/theme.dart';
 import 'package:alliance_tech_check_in/features/common/custom_header_bar.dart';
 import 'package:alliance_tech_check_in/features/survey/toggle_selection_button.dart';
 import 'package:alliance_tech_check_in/generated/i18n.dart';
 import 'package:alliance_tech_check_in/locator.dart';
-import 'package:alliance_tech_check_in/repositories/auth/auth_repository.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:alliance_tech_check_in/utils/pair.dart';
+import 'package:alliance_tech_check_in/widgets/common_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:alliance_tech_check_in/utils/extensions/text_ext.dart';
+import 'package:alliance_tech_check_in/utils/extensions/date_ext.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SurveyScreen extends StatefulWidget {
-  final AuthRepository _authService;
+  final SharedPreferences sharedPrefs;
 
   SurveyScreen()
-      :_authService = sl();
+    : sharedPrefs = sl();
 
   @override
   _SurveyScreenState createState() => _SurveyScreenState();
 }
 
-class _SurveyScreenState extends State<SurveyScreen> {
-  Map<String, TextEditingController> dynamicTextFieldControllers = Map<String, TextEditingController>();
+class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMixin {
+  TextEditingController _firstNameController = TextEditingController();
+  TextEditingController _lastNameController = TextEditingController();
   ScrollController _scrollController = ScrollController();
-  Map<int, bool> responses = Map<int, bool>();
-  DateTime exposedDate;
+
+  Map<int, bool> _responses = Map<int, bool>();
+  Map<int, InfoState> _moreInfoState = Map<int, InfoState>();
+  DateTime _exposedDate;
+
+  AnimationController _tempController;
+  AnimationController _exposureController;
+  AnimationController _resetController;
+  Animation _tempAnimation;
+  Animation _exposureAnimation;
+  Animation _resetAnimation;
+
+  Duration _animationDuration = const Duration(milliseconds: 500);
 
   final _formKey = GlobalKey<FormState>();
+
+  Map<int, Pair<AnimationController, Animation>> _infoAnimationControllers = Map<int, Pair<AnimationController, Animation>>();
 
   @override
   void initState() {
     super.initState();
+
+    _tempController = AnimationController(
+      duration: _animationDuration,
+      vsync: this
+    );
+    _tempAnimation = CurvedAnimation(parent: _tempController, curve: Curves.fastOutSlowIn);
+
+    _exposureController = AnimationController(
+        duration: _animationDuration,
+        vsync: this
+    );
+    _exposureAnimation = CurvedAnimation(parent: _exposureController, curve: Curves.fastOutSlowIn);
+    _exposureController.forward();
+
+    _resetController = AnimationController(
+        duration: _animationDuration,
+        vsync: this
+    );
+    _resetAnimation = CurvedAnimation(parent: _resetController, curve: Curves.fastOutSlowIn);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _tempController.dispose();
+    _exposureController.dispose();
+    _resetController.dispose();
+    _scrollController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
+
+    _infoAnimationControllers.forEach((key, value) {
+      value.first.dispose();
+    });
   }
 
   @override
@@ -41,82 +94,127 @@ class _SurveyScreenState extends State<SurveyScreen> {
               height: 100,
               child: Padding(
                 padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-                child: Image(
-                  image: AssetImage("assets/hiprlogo.png"),
-                  height: 30.0
+                child: Stack(
+                  children: [
+                    Center(
+                      child: Image(
+                        image: AssetImage("assets/alliancelogo.png"),
+                        height: 50.0
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: FadeTransition(
+                        opacity: _resetAnimation,
+                        child: GestureDetector(
+                          child: FaIcon(
+                            FontAwesomeIcons.plus,
+                            color: AppColors.darkTextColor,
+                            size: 24,
+                          ),
+                          onTap: () {
+                            // show dialog
+                          }
+                        ),
+                      ),
+                    )
+                  ],
                 ),
               ),
             ),
-            body: Container(
-                width: MediaQuery.of(context).size.width,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Scrollbar(
-                        isAlwaysShown: true,
-                        controller: _scrollController,
-                        child: ListView(
+            body: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onPanDown: (_) {
+                FocusScope.of(context).unfocus();
+              },
+              child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Scrollbar(
+                          isAlwaysShown: true,
                           controller: _scrollController,
-                          children: [
-                            _createHeader("Personal Information"),
-                            _createPersonalInfo(),
-                            SizedBox(height: 16),
-                            _createHeader("Sign In Information"),
-                            _createQuestion(0, S.of(context).question1, "the centers"),
-                            _createQuestion(1, S.of(context).question2, null),
-                            _createQuestion(2, S.of(context).question3, null),
-                          ],
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(8, 8, 8, 8),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: AllianceTheme.of(context).primaryColor,
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.center,
+                          child: ListView(
+                            controller: _scrollController,
                             children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text(
-                                  "SUBMIT",
-                                  style: Theme.of(context).textTheme.headline4.toLight(),
-                                ),
-                              ),
-                            ]
+                              _createHeader(S.of(context).checkIn(DateTime.now().prettyPrint())),
+                              _createPersonalInfo(),
+                              SizedBox(height: 16),
+                              _createQuestion(0, S.of(context).question1, info: S.of(context).question1Details),
+                              _createQuestion(1, S.of(context).question2, showDatePicker: true, dateRequired: true),
+                              _createQuestion(2, S.of(context).question3, info: S.of(context).question3Details, showOnFirst: true),
+                              _createDisclaimer()
+                            ],
                           ),
                         ),
                       ),
-                      onTap: () {
-                          //submit here
-                      },
-                    )
-                  ],
-                )
+                      Builder(
+                        builder: (context) {
+                          return GestureDetector(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: AllianceTheme.of(context).primaryColor,
+                              ),
+                              child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(
+                                        S.of(context).submit,
+                                        style: Theme.of(context).textTheme.headline4.toLight(),
+                                      ),
+                                    ),
+                                  ]
+                              ),
+                            ),
+                            onTap: () {
+                              //submit here
+                              var exposureDateInvalid = _responses[1] && _exposedDate == null;
+                              if (_formKey.currentState.validate() && !exposureDateInvalid) {
+                                _tempController.reverse();
+                                // _resetController.forward();
+
+                                var maxScroll = _scrollController.position.maxScrollExtent;
+                                if (maxScroll - _scrollController.position.pixels <= 25) {
+                                  widget.sharedPrefs.setString(firstNameKey, _firstNameController.text);
+                                  widget.sharedPrefs.setString(lastNameKey, _lastNameController.text);
+
+                                  showSingleActionDialog(context, "HI", "HI AGAIN");
+                                }
+                                else {
+                                  _scrollController.animateTo(_scrollController.position.maxScrollExtent, duration: _animationDuration, curve: Curves.easeOut);
+                                }
+                              }
+                              else {
+                                _tempController.forward();
+                                Scaffold.of(context).showSnackBar(SnackBar(content: Text(S.of(context).responseEmpty)));
+                              }
+                            },
+                          );
+                        },
+                      )
+                    ],
+                  )
+              ),
             )
         )
     );
   }
 
-  Widget _buildDivider() {
-    return Padding(
-      padding: EdgeInsets.all(8),
-      child: Divider(
-        height: 5,
-        indent: 8,
-        endIndent: 8,
-        thickness: 2,
-        color: AppColors.backgroundOutline,
-      ),
-    );
-  }
-
   Widget _createPersonalInfo() {
+    var firstName = widget.sharedPrefs.getString(firstNameKey);
+    var lastName = widget.sharedPrefs.getString(lastNameKey);
+
+    if (firstName != null && lastName != null) {
+      print("Name $firstName $lastName");
+      _firstNameController.text = firstName;
+      _lastNameController.text = lastName;
+    }
+
     return Padding(
         padding: EdgeInsets.fromLTRB(16, 8, 16, 2),
         child: Form(
@@ -124,50 +222,159 @@ class _SurveyScreenState extends State<SurveyScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _createTextEntry("First name", TextEditingController()),
-              _createTextEntry("Last name", TextEditingController()),
+              _createTextEntry(S.of(context).firstName, _firstNameController),
+              _createTextEntry(S.of(context).lastName, _lastNameController),
+              _createTempReading(),
             ],
           ),
         ),
     );
   }
 
-  Widget _createQuestion(int index, String text, String info) {
-    responses.putIfAbsent(index, () => false);
+  Widget _createTempReading() {
+    return Padding(
+      padding: EdgeInsets.only(top: 8, bottom: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 12),
+            child: Text(
+              S.of(context).currentTemp,
+              style: Theme.of(context).textTheme.headline5.setColor(AppColors.headline)
+            ),
+          ),
+          SizedBox(width: 20),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IntrinsicWidth(
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: TextFormField(
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: S.of(context).tempHint,
+                          hintStyle: Theme.of(context).textTheme.headline5.setColor(AppColors.primaryColor),
+                          contentPadding: EdgeInsets.all(4)
+                        ),
+                        style: Theme.of(context).textTheme.headline5,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4, right: 8),
+                    child: Text(
+                      "\u00B0F",
+                      style: Theme.of(context).textTheme.headline5
+                    ),
+                  )
+                ],
+              ),
+              SizeTransition(
+                sizeFactor: _tempAnimation,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 2, right: 8),
+                  child: Text(
+                    S.of(context).responseError,
+                    style: Theme.of(context).textTheme.headline5.smaller(8).setColor(AppColors.error),
+                  ),
+                ),
+              )
+            ],
+          )
+        ],
+      )
+    );
+  }
+
+  Widget _createQuestion(int index, String text, {String info = "", bool showOnFirst = false, bool showDatePicker = false, bool dateRequired = false}) {
+    _responses.putIfAbsent(index, () => false);
+    _moreInfoState.putIfAbsent(index, () => showOnFirst ? InfoState.FIRST : InfoState.HIDDEN);
 
     return Padding(
       padding: EdgeInsets.all(16),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _createQuestionHeader("Question ${index + 1}"),
+          _createQuestionHeader(S.of(context).questionHeader(index + 1)),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Flexible(
                   child: Padding(
                     padding: const EdgeInsets.only(right: 32),
-                    child: _createQuestionText(text),
+                    child: _createQuestionDetails(index, text, info, showDatePicker),
                   )
               ),
               ToggleSelectionButton((value) {
                 setState(() {
-                  responses[index] = value;
+                  if (dateRequired) {
+                    value ? _exposureController.forward() : _exposureController.reverse();
+                  }
+                  _responses[index] = value;
                 });
               }),
             ],
           ),
-          (info != null) ? GestureDetector(
-            child: Text("more info"),
-            onTap: () {
-              // open dialog
-            },
-          ) : SizedBox(width: 0, height: 0),
-          (exposedDate != null) ? Text(
-            "Date here"
-          ) : SizedBox(width: 0, height: 0)
         ],
-      )
+      ),
+    );
+  }
+
+  Widget _createMoreInfo(int index, {String info = ""}) {
+    var controller = AnimationController(
+      duration: _animationDuration,
+      vsync: this,
+    );
+    var animation = CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn);
+    _infoAnimationControllers.putIfAbsent(index, () => Pair(controller, animation));
+
+    if (_moreInfoState[index] == InfoState.FIRST) {
+      _setNextInfoState(index, InfoState.SHOWN);
+    }
+
+    return Column(
+      children: [
+        (info.isNotEmpty) ? GestureDetector(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(0, 16, 0, 8),
+            child: Row(
+              children: [
+                Text(
+                  _moreInfoState[index] == InfoState.SHOWN ? S.of(context).hideInfo : S.of(context).moreInfo,
+                  style: Theme.of(context).textTheme.headline6.smaller(2),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8),
+                  child: FaIcon(
+                    _moreInfoState[index] == InfoState.SHOWN ? FontAwesomeIcons.angleUp : FontAwesomeIcons.angleDown,
+                    color: AppColors.lightTextColor,
+                    size: 16,
+                  ),
+                )
+              ],
+            ),
+          ),
+          onTap: () {
+            _setNextInfoState(index, _moreInfoState[index] == InfoState.SHOWN ? InfoState.HIDDEN : InfoState.SHOWN);
+          },
+        ) : SizedBox(height: 0),
+        SizeTransition(
+            sizeFactor: _infoAnimationControllers[index].second,
+            child: Text(
+              info,
+              style: Theme.of(context).textTheme.bodyText1.bigger(2),
+            )
+        )
+      ],
     );
   }
 
@@ -191,38 +398,117 @@ class _SurveyScreenState extends State<SurveyScreen> {
     );
   }
 
-  Widget _createQuestionText(String text) {
-    return Text(
-      text,
-      style: Theme.of(context).textTheme.bodyText1.bigger(4)
+  Widget _createQuestionDetails(int index, String text, String info, bool showDatePicker) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          text,
+          style: Theme.of(context).textTheme.bodyText1.bigger(6).setColor(AppColors.headline)
+        ),
+        _createMoreInfo(index, info: info),
+        SizeTransition(
+          sizeFactor: _exposureAnimation,
+          child: _createDatePicker(showDatePicker)
+        )
+      ],
     );
+  }
+
+  Widget _createDatePicker(bool enableDatePicker) {
+    if (enableDatePicker) {
+      return Builder(
+        builder: (context) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(top: 8, bottom: 8),
+                child: GestureDetector(
+                  child: Container(
+                    padding: EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                        color: AllianceTheme.of(context).primaryColor,
+                        borderRadius: BorderRadius.circular(2)
+                    ),
+                    child: Text(
+                      _exposedDate == null ? S.of(context).selectExposureDate : _exposedDate.prettyPrint(),
+                      style: Theme.of(context).textTheme.headline5.smaller(2).toLight(),
+                    ),
+                  ),
+                  onTap: () {
+                    showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(2015),
+                      lastDate: DateTime.now(),
+                    ).then((value) {
+                      setState(() {
+                        _exposedDate = value;
+                      });
+                    });
+                  },
+                ),
+              ),
+              SizeTransition(
+                sizeFactor: _tempAnimation,
+                child: Text(
+                  S.of(context).responseError,
+                  style: Theme.of(context).textTheme.headline5.smaller(8).setColor(AppColors.error),
+                ),
+              )
+            ],
+          );
+        }
+      );
+    }
+
+    return SizedBox(height: 0);
   }
 
   Widget _createTextEntry(String labelText, TextEditingController controller) {
     return Padding(
-      padding: const EdgeInsets.only(top: 8, bottom: 8),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.grey,
+      padding: const EdgeInsets.only(bottom: 8, right: 8, top: 4),
+      child: TextFormField(
+        controller: controller,
+        decoration: InputDecoration(
+          labelText: labelText,
+          labelStyle: Theme.of(context).textTheme.headline5.setColor(AppColors.headline),
+          errorStyle: Theme.of(context).textTheme.headline5.smaller(8).setColor(AppColors.error),
+          contentPadding: EdgeInsets.all(4)
         ),
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(16, 0, 8, 0),
-          child: TextFormField(
-            decoration: InputDecoration(
-                border: InputBorder.none,
-                labelText: labelText
-            ),
-            validator: _validateInput,
-            style: Theme.of(context).textTheme.headline5,
-          ),
-        ),
+        validator: _validateInput,
+        style: Theme.of(context).textTheme.headline5,
       ),
     );
   }
 
+  Widget _createDisclaimer() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 24, 16),
+      child: Text(
+        S.of(context).disclaimer,
+        style: Theme.of(context).textTheme.headline6.setColor(AppColors.error),
+        textAlign: TextAlign.justify,
+      ),
+    );
+  }
+
+  void _setNextInfoState(int index, InfoState nextState) {
+    setState(() {
+      if (nextState == InfoState.HIDDEN) {
+        _infoAnimationControllers[index].first.reverse();
+      }
+      else {
+        _infoAnimationControllers[index].first.forward();
+      }
+      _moreInfoState[index] = nextState;
+    });
+  }
+
   String _validateInput(String value) {
     if (value.isEmpty) {
-      return "Response required";
+      return S.of(context).responseError;
     }
 
     return null;
