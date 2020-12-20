@@ -30,6 +30,26 @@ class S {
     return Intl.message("Alliance Technologies", name: 'title');
   }
 
+  String get name_hint {
+    return Intl.message("Full name", name: 'name_hint');
+  }
+
+  String get email_hint {
+    return Intl.message("Email", name: 'email_hint');
+  }
+
+  String get password_hint {
+    return Intl.message("Password", name: 'password_hint');
+  }
+
+  String get login {
+    return Intl.message("Login", name: 'login');
+  }
+
+  String lastCheckIn(date) {
+    return Intl.message("Last check in date: ${date}", name: 'lastCheckIn', args: [date]);
+  }
+
   String checkIn(date) {
     return Intl.message("Check In For ${date}", name: 'checkIn', args: [date]);
   }

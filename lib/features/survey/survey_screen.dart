@@ -202,6 +202,8 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
                                   widget.sharedPrefs.setString(lastNameKey, _lastNameController.text);
 
                                   showSingleActionDialog(context, "HI", "HI AGAIN");
+                                  // TODO: send to api and show confirm dialog
+                                  // save date into sharedprefs, display time of last entry
                                 }
                                 else {
                                   _scrollController.animateTo(_scrollController.position.maxScrollExtent, duration: _animationDuration, curve: Curves.easeOut);
@@ -421,7 +423,7 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
       children: [
         Text(
           text,
-          style: Theme.of(context).textTheme.bodyText1.bigger(6).setColor(AppColors.headline)
+          style: Theme.of(context).textTheme.bodyText1.bigger(6).toLight()
         ),
         _createMoreInfo(index, info: info),
         SizeTransition(

@@ -28,6 +28,7 @@ class AppColors {
   static const backgroundColor = Color(0xFF153151);
   static const backgroundLight = Color(0xFFF9F9F9);
   static const accent = Color(0xFF3399ff);
+  static const backgroundColorDark = Color(0xFF0b1a2b);
 
   static const toggleSelected = primaryColor;
   static const toggleDeselected = Color(0xDD9B9B9B);

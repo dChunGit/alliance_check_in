@@ -1,3 +1,4 @@
+import 'package:alliance_tech_check_in/features/auth/auth_screen.dart';
 import 'package:alliance_tech_check_in/features/survey/survey_screen.dart';
 import 'package:alliance_tech_check_in/generated/i18n.dart';
 import 'package:alliance_tech_check_in/utils/transitions/slide_route_transition.dart';
@@ -13,7 +14,7 @@ void main() async {
   await service_locator.init();
 
   initializeDateFormatting();
-  runApp(AllianceApp(defaultHome: SurveyScreen(),));
+  runApp(AllianceApp(defaultHome: AuthScreen()));
 }
 
 class AllianceApp extends StatelessWidget {
@@ -34,9 +35,9 @@ class AllianceApp extends StatelessWidget {
       onGenerateRoute: (settings) {
         switch(settings.name) {
           case surveyScreen: return SlideLeftTransition(page: SurveyScreen());
+          case loginScreen: return SlideRightTransition(page: AuthScreen());
         }
-
-        return MultiPurposeRoute(exitPage: context.widget, enterPage: SurveyScreen());
+        return MultiPurposeRoute(exitPage: context.widget, enterPage: AuthScreen());
       },
     );
   }

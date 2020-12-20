@@ -1,6 +1,12 @@
 {
   "title": "Alliance Technologies",
 
+  "name_hint": "Full name",
+  "email_hint": "Email",
+  "password_hint": "Password",
+  "login": "Login",
+
+  "lastCheckIn": "Last check in date: ${date}",
   "checkIn": "Check In For ${date}",
 
   "firstName": "First name",

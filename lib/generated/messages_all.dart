@@ -14,6 +14,11 @@ class $en extends MessageLookupByLibrary {
   
   final messages = {
 		"title" : MessageLookupByLibrary.simpleMessage("Alliance Technologies"),
+		"name_hint" : MessageLookupByLibrary.simpleMessage("Full name"),
+		"email_hint" : MessageLookupByLibrary.simpleMessage("Email"),
+		"password_hint" : MessageLookupByLibrary.simpleMessage("Password"),
+		"login" : MessageLookupByLibrary.simpleMessage("Login"),
+		"lastCheckIn" : (date) => "Last check in date: ${date}",
 		"checkIn" : (date) => "Check In For ${date}",
 		"firstName" : MessageLookupByLibrary.simpleMessage("First name"),
 		"lastName" : MessageLookupByLibrary.simpleMessage("Last name"),
