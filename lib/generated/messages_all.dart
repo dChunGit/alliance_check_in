@@ -46,7 +46,7 @@ class $en extends MessageLookupByLibrary {
 		"question3Details" : MessageLookupByLibrary.simpleMessage("Cough, Fever, Chills, Repeated Shaking with Chills, Shortness of breath, Difficulty breathing, Muscle pains, Headache, Sore throat, New loss of taste or smell"),
 		"disclaimer" : MessageLookupByLibrary.simpleMessage("By signing in to our facility, you are acknowledging that an inherent risk of exposure to COVID-19 exists in any public space where people are present, and you are voluntarily assuming all related risks and agree not to hold Alliance Technologies, its officers, or agents liable for any illness or injury."),
 		"currentTemp" : MessageLookupByLibrary.simpleMessage("Current Temperature:"),
-		"tempHint" : MessageLookupByLibrary.simpleMessage("--"),
+		"tempHint" : MessageLookupByLibrary.simpleMessage("--.-"),
 		"selectExposureDate" : MessageLookupByLibrary.simpleMessage("Select Exposure Date"),
 		"submit" : MessageLookupByLibrary.simpleMessage("SUBMIT"),
 		"submitting" : MessageLookupByLibrary.simpleMessage("SUBMITTING..."),

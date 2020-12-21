@@ -207,7 +207,7 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Padding(
-                                      padding: const EdgeInsets.fromLTRB(8, 8, 16, 8),
+                                      padding: const EdgeInsets.fromLTRB(8, 16, 16, 24),
                                       child: Text(
                                         (!_uploading) ? S.of(context).submit : S.of(context).submitting,
                                         style: Theme.of(context).textTheme.headline4.toLight(),
@@ -349,10 +349,10 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: S.of(context).tempHint,
-                          hintStyle: Theme.of(context).textTheme.headline5.setColor(AppColors.primaryColor),
+                          hintStyle: Theme.of(context).textTheme.headline5.setColor(AppColors.primaryColor).bigger(4),
                           contentPadding: EdgeInsets.all(4)
                         ),
-                        style: Theme.of(context).textTheme.headline5,
+                        style: Theme.of(context).textTheme.headline5.bigger(4),
                       ),
                     ),
                   ),
@@ -360,7 +360,7 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
                     padding: const EdgeInsets.only(top: 4, right: 8),
                     child: Text(
                       "\u00B0F",
-                      style: Theme.of(context).textTheme.headline5
+                      style: Theme.of(context).textTheme.headline5.bigger(4)
                     ),
                   )
                 ],
@@ -439,7 +439,7 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
               children: [
                 Text(
                   _moreInfoState[index] == InfoState.SHOWN ? S.of(context).hideInfo : S.of(context).moreInfo,
-                  style: Theme.of(context).textTheme.headline6.smaller(2),
+                  style: Theme.of(context).textTheme.headline6.bigger(4),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 8),

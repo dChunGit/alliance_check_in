@@ -44,7 +44,7 @@ class _AuthScreenState extends State<AuthScreen> {
                         child: Column(
                           children: [
                             Padding(
-                              padding: EdgeInsets.fromLTRB(25, 0, 25, 45),
+                              padding: EdgeInsets.fromLTRB(35, 0, 35, 45),
                               child: Image(image: AssetImage("assets/alliancelogo_large.png"), height: 125),
                             ),
                             SizedBox(
@@ -199,16 +199,13 @@ class _AuthScreenState extends State<AuthScreen> {
       },
       child: Padding(
           padding: EdgeInsets.fromLTRB(35, 10, 35, 0),
-          child: Container(
-              width: MediaQuery.of(context).size.width,
-              child: Padding(
-                padding: EdgeInsets.all(12),
-                child:Text(
-                    S.of(context).forgotPassword,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyText1.toLight().toNormal().bigger(4)
-                ),
-              )
+          child: Padding(
+            padding: EdgeInsets.all(12),
+            child: Text(
+                S.of(context).forgotPassword,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.headline5.toLight().toNormal().bigger(4)
+            ),
           )
       ),
     );

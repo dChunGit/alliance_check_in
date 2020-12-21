@@ -159,7 +159,7 @@ class S {
   }
 
   String get tempHint {
-    return Intl.message("--", name: 'tempHint');
+    return Intl.message("--.-", name: 'tempHint');
   }
 
   String get selectExposureDate {

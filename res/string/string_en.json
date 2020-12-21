@@ -41,7 +41,7 @@
   "disclaimer": "By signing in to our facility, you are acknowledging that an inherent risk of exposure to COVID-19 exists in any public space where people are present, and you are voluntarily assuming all related risks and agree not to hold Alliance Technologies, its officers, or agents liable for any illness or injury.",
 
   "currentTemp": "Current Temperature:",
-  "tempHint": "--",
+  "tempHint": "--.-",
   "selectExposureDate": "Select Exposure Date",
   "submit": "SUBMIT",
   "submitting": "SUBMITTING...",

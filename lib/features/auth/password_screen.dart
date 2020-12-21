@@ -365,7 +365,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
                 child: Text(
                   S.of(context).back,
                   textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.headline5.toLight().bigger(4).toNormal(),
+                  style: Theme.of(context).textTheme.headline4.toLight().bigger(4).toNormal(),
                 ),
               ),
             ],
