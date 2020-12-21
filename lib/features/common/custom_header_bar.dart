@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 class CustomHeaderBar extends PreferredSize {
   final Widget child;
   final double height;
+  final Color headerColor;
 
   const CustomHeaderBar({
     @required this.child,
-    this.height = kToolbarHeight
+    this.height = kToolbarHeight,
+    this.headerColor = AppColors.headerColor
   });
 
   @override
@@ -17,7 +19,7 @@ class CustomHeaderBar extends PreferredSize {
   Widget build(BuildContext context) {
     return Container(
       height: preferredSize.height,
-      color: AppColors.headerColor,
+      color: headerColor,
       alignment: Alignment.center,
       child: child,
     );

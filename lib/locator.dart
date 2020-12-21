@@ -1,5 +1,9 @@
 import 'package:alliance_tech_check_in/services/api/api_service.dart';
 import 'package:alliance_tech_check_in/services/api/api_service_impl.dart';
+import 'package:alliance_tech_check_in/services/api/auth_service.dart';
+import 'package:alliance_tech_check_in/services/api/auth_service_impl.dart';
+import 'package:alliance_tech_check_in/services/api/auth_storage_service.dart';
+import 'package:alliance_tech_check_in/services/api/auth_storage_service.dart';
 import 'package:alliance_tech_check_in/services/network/network_status.dart';
 import 'package:alliance_tech_check_in/services/network/network_status_impl.dart';
 import 'package:data_connection_checker/data_connection_checker.dart';
@@ -17,4 +21,5 @@ Future<void> init() async {
   //  Repositories
   //  Api Repository
   sl.registerLazySingleton<ApiService>(() => ApiServiceImpl());
+  sl.registerLazySingleton<AuthService>(() => AuthServiceImpl());
 }

@@ -28,6 +28,7 @@ class AppColors {
   static const backgroundColor = Color(0xFF153151);
   static const backgroundLight = Color(0xFFF9F9F9);
   static const accent = Color(0xFF3399ff);
+  static const accent2 = Color(0xffF58232);
   static const backgroundColorDark = Color(0xFF0b1a2b);
 
   static const toggleSelected = primaryColor;
@@ -38,7 +39,8 @@ class AppColors {
   static const headline = Color(0xFF4d4d4d);
 
   // Status colors
-  static const error = Color(0xffF58232);
+  static const error = Color(0xFFF58232);
+  static const good = Color(0xFF00A878);
 
   // Misc colors
   static const toastColor = Color(0xDD9B9B9B);
@@ -55,7 +57,9 @@ class AllianceTheme {
       errorColor: AppColors.error,
       brightness: Brightness.light,
       visualDensity: VisualDensity.adaptivePlatformDensity,
-
+      appBarTheme: AppBarTheme(
+        elevation: 0,
+      ),
       textTheme: GoogleFonts.karlaTextTheme(theme.textTheme.copyWith(
         headline1: theme.textTheme.headline1.copyWith(
             fontWeight: FontWeight.w500),

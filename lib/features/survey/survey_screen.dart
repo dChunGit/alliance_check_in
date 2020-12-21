@@ -5,6 +5,9 @@ import 'package:alliance_tech_check_in/features/common/custom_header_bar.dart';
 import 'package:alliance_tech_check_in/features/survey/toggle_selection_button.dart';
 import 'package:alliance_tech_check_in/generated/i18n.dart';
 import 'package:alliance_tech_check_in/locator.dart';
+import 'package:alliance_tech_check_in/models/api/api_survey.dart';
+import 'package:alliance_tech_check_in/services/api/api_service.dart';
+import 'package:alliance_tech_check_in/services/api/auth_service.dart';
 import 'package:alliance_tech_check_in/utils/pair.dart';
 import 'package:alliance_tech_check_in/widgets/common_widgets.dart';
 import 'package:flutter/material.dart';
@@ -12,13 +15,18 @@ import 'package:flutter/services.dart';
 import 'package:alliance_tech_check_in/utils/extensions/text_ext.dart';
 import 'package:alliance_tech_check_in/utils/extensions/date_ext.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SurveyScreen extends StatefulWidget {
   final SharedPreferences sharedPrefs;
+  final AuthService _authService;
+  final ApiService _apiService;
 
   SurveyScreen()
-    : sharedPrefs = sl();
+    : _authService = sl(),
+      _apiService = sl(),
+      sharedPrefs = sl();
 
   @override
   _SurveyScreenState createState() => _SurveyScreenState();
@@ -33,6 +41,7 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
   Map<int, bool> _responses = Map<int, bool>();
   Map<int, InfoState> _moreInfoState = Map<int, InfoState>();
   DateTime _exposedDate;
+  DateTime _lastSubmittedDate;
 
   AnimationController _tempController;
   AnimationController _dateController;
@@ -43,15 +52,28 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
   Animation _exposureAnimation;
   Animation _resetAnimation;
 
+  bool _uploading = false;
+
   Duration _animationDuration = const Duration(milliseconds: 500);
 
   final _formKey = GlobalKey<FormState>();
 
   Map<int, Pair<AnimationController, Animation>> _infoAnimationControllers = Map<int, Pair<AnimationController, Animation>>();
 
+  void _resetState() {
+    _exposedDate = null;
+    _temperatureController.clear();
+  }
+
   @override
   void initState() {
     super.initState();
+
+    widget._apiService.init();
+    var lastSubmitted = widget.sharedPrefs.getInt(lastSubmittedKey);
+    if (lastSubmitted != null) {
+      _lastSubmittedDate = DateTime.fromMillisecondsSinceEpoch(lastSubmitted);
+    }
 
     _tempController = AnimationController(
       duration: _animationDuration,
@@ -109,34 +131,40 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
         child: Scaffold(
             appBar: CustomHeaderBar(
               height: 100,
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-                child: Stack(
-                  children: [
-                    Center(
-                      child: Image(
-                        image: AssetImage("assets/alliancelogo.png"),
-                        height: 50.0
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: FadeTransition(
-                        opacity: _resetAnimation,
-                        child: GestureDetector(
-                          child: FaIcon(
-                            FontAwesomeIcons.plus,
-                            color: AppColors.darkTextColor,
-                            size: 24,
-                          ),
-                          onTap: () {
-                            // show dialog
-                          }
+              child: Stack(
+                children: [
+                  Align(
+                    alignment: Alignment.center,
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 22, bottom: 8),
+                        child: Image(
+                            image: AssetImage("assets/alliancelogo.png"),
+                            height: 50.0
                         ),
                       ),
-                    )
-                  ],
-                ),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 22, bottom: 8, right: 8),
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.logout,
+                          color: AppColors.darkTextColor,
+                          size: 32,
+                        ),
+                        onPressed: () {
+                          // show dialog
+                          widget._authService.signOut().then((value) {
+                            Navigator.pushReplacementNamed(context, loginScreen);
+                          });
+                        }
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
             body: GestureDetector(
@@ -179,31 +207,73 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Padding(
-                                      padding: const EdgeInsets.all(8.0),
+                                      padding: const EdgeInsets.fromLTRB(8, 8, 16, 8),
                                       child: Text(
-                                        S.of(context).submit,
+                                        (!_uploading) ? S.of(context).submit : S.of(context).submitting,
                                         style: Theme.of(context).textTheme.headline4.toLight(),
                                       ),
                                     ),
+                                    Visibility(
+                                      visible: _uploading,
+                                      child: SizedBox(
+                                        height: 20,
+                                        width: 20,
+                                        child: CircularProgressIndicator()
+                                      ),
+                                    )
                                   ]
                               ),
                             ),
                             onTap: () {
                               //submit here
+                              print(_responses);
                               var exposureDateInvalid = _responses[1] && _exposedDate == null;
-                              var temp = _temperatureController.text;
+                              var temp = _temperatureController.text.trim();
                               if (_formKey.currentState.validate() && !exposureDateInvalid && temp.isNotEmpty) {
                                 _tempController.reverse();
                                 _dateController.reverse();
 
                                 var maxScroll = _scrollController.position.maxScrollExtent;
                                 if (maxScroll - _scrollController.position.pixels <= 25) {
-                                  widget.sharedPrefs.setString(firstNameKey, _firstNameController.text);
-                                  widget.sharedPrefs.setString(lastNameKey, _lastNameController.text);
+                                  var firstname = _firstNameController.text.trim();
+                                  var lastname = _lastNameController.text.trim();
 
-                                  showSingleActionDialog(context, "HI", "HI AGAIN");
-                                  // TODO: send to api and show confirm dialog
-                                  // save date into sharedprefs, display time of last entry
+                                  widget.sharedPrefs.setString(firstNameKey, firstname);
+                                  widget.sharedPrefs.setString(lastNameKey, lastname);
+
+                                  var apiSurvey = ApiSurvey.fromValues(
+                                    firstname,
+                                    lastname,
+                                    temp,
+                                    _responses[0],
+                                    _responses[1],
+                                    _exposedDate,
+                                    _responses[2]
+                                  );
+
+                                  setState(() {
+                                    _uploading = true;
+                                  });
+
+                                  widget._apiService.sendSurveyData(apiSurvey).then((result) {
+                                    if (result) {
+                                      widget.sharedPrefs.setInt(lastSubmittedKey, DateTime.now().millisecondsSinceEpoch);
+                                      setState(() {
+                                        _lastSubmittedDate = DateTime.now();
+                                        _uploading = false;
+                                        _resetState();
+                                      });
+                                      showResultDialog(context, true);
+                                    }
+                                    else {
+                                      Scaffold.of(context).showSnackBar(
+                                          SnackBar(content: Text(S.of(context).submit_error))
+                                      );
+                                      setState(() {
+                                        _uploading = false;
+                                      });
+                                    }
+                                  });
                                 }
                                 else {
                                   _scrollController.animateTo(_scrollController.position.maxScrollExtent, duration: _animationDuration, curve: Curves.easeOut);
@@ -215,7 +285,7 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
                                 }
 
                                 if (exposureDateInvalid) {
-                                  print("Exposure date invalid $_exposedDate}");
+                                  print("Exposure date invalid $_exposedDate");
                                   _dateController.forward();
                                 }
                                 Scaffold.of(context).showSnackBar(SnackBar(content: Text(S.of(context).responseEmpty)));
@@ -398,12 +468,24 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
   }
 
   Widget _createHeader(String text) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 2),
-      child: Text(
-        text,
-        style: Theme.of(context).textTheme.headline4,
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 2),
+          child: Text(
+            text,
+            style: Theme.of(context).textTheme.headline4,
+          ),
+        ),
+        (_lastSubmittedDate == null) ? SizedBox(height: 0) : Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+          child: Text(
+            S.of(context).lastCheckIn(DateFormat.yMMMd().add_jm().format(_lastSubmittedDate)),
+            style: Theme.of(context).textTheme.headline5.toDark()
+          )
+        )
+      ],
     );
   }
 
@@ -423,7 +505,7 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
       children: [
         Text(
           text,
-          style: Theme.of(context).textTheme.bodyText1.bigger(6).toLight()
+          style: Theme.of(context).textTheme.bodyText1.bigger(6).toDark()
         ),
         _createMoreInfo(index, info: info),
         SizeTransition(
@@ -497,7 +579,7 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
           contentPadding: EdgeInsets.all(4)
         ),
         validator: _validateInput,
-        style: Theme.of(context).textTheme.headline5,
+        style: Theme.of(context).textTheme.headline5.bigger(2),
       ),
     );
   }

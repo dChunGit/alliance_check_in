@@ -31,7 +31,7 @@ class S {
   }
 
   String get name_hint {
-    return Intl.message("Full name", name: 'name_hint');
+    return Intl.message("Username", name: 'name_hint');
   }
 
   String get email_hint {
@@ -42,12 +42,76 @@ class S {
     return Intl.message("Password", name: 'password_hint');
   }
 
+  String get new_password_hint {
+    return Intl.message("New password", name: 'new_password_hint');
+  }
+
+  String get confirm_password_hint {
+    return Intl.message("Confirm new password", name: 'confirm_password_hint');
+  }
+
+  String get confirm_code_hint {
+    return Intl.message("Confirmation code", name: 'confirm_code_hint');
+  }
+
   String get login {
     return Intl.message("Login", name: 'login');
   }
 
+  String get forgotPassword {
+    return Intl.message("Forgot password", name: 'forgotPassword');
+  }
+
+  String get changePassword {
+    return Intl.message("Change password", name: 'changePassword');
+  }
+
+  String get next {
+    return Intl.message("Next", name: 'next');
+  }
+
+  String get back {
+    return Intl.message("Back", name: 'back');
+  }
+
+  String get username_error {
+    return Intl.message("Username must not be empty", name: 'username_error');
+  }
+
+  String get password_error {
+    return Intl.message("Password must not be empty", name: 'password_error');
+  }
+
+  String get confirmation_error {
+    return Intl.message("Confirmation code must not be empty", name: 'confirmation_error');
+  }
+
+  String get password_change_error {
+    return Intl.message("Error changing password, please try again", name: 'password_change_error');
+  }
+
+  String get password_match_error {
+    return Intl.message("Passwords must match", name: 'password_match_error');
+  }
+
+  String get login_cred_error {
+    return Intl.message("Incorrect username or password, please try again", name: 'login_cred_error');
+  }
+
+  String get generic_login_error {
+    return Intl.message("Error logging in, please try again", name: 'generic_login_error');
+  }
+
+  String get first_time_dialog_title {
+    return Intl.message("Welcome!", name: 'first_time_dialog_title');
+  }
+
+  String get first_time_dialog_message {
+    return Intl.message("Since it's your first time logging in, you will need to set your own password", name: 'first_time_dialog_message');
+  }
+
   String lastCheckIn(date) {
-    return Intl.message("Last check in date: ${date}", name: 'lastCheckIn', args: [date]);
+    return Intl.message("Last checked in: ${date}", name: 'lastCheckIn', args: [date]);
   }
 
   String checkIn(date) {
@@ -106,6 +170,10 @@ class S {
     return Intl.message("SUBMIT", name: 'submit');
   }
 
+  String get submitting {
+    return Intl.message("SUBMITTING...", name: 'submitting');
+  }
+
   String get moreInfo {
     return Intl.message("MORE INFO", name: 'moreInfo');
   }
@@ -122,12 +190,28 @@ class S {
     return Intl.message("Some responses were left empty", name: 'responseEmpty');
   }
 
+  String get submit_error {
+    return Intl.message("Error submitting responses, please try again", name: 'submit_error');
+  }
+
+  String get submit_complete_title {
+    return Intl.message("Success!", name: 'submit_complete_title');
+  }
+
+  String get submit_complete_message {
+    return Intl.message("Check in completed!", name: 'submit_complete_message');
+  }
+
   String get yes {
     return Intl.message("YES", name: 'yes');
   }
 
   String get no {
     return Intl.message("NO", name: 'no');
+  }
+
+  String get ok {
+    return Intl.message("OK", name: 'ok');
   }
 
 
