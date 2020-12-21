@@ -58,9 +58,10 @@ dev_dependencies:
 
 
 flutter_icons:
-  android: "launcher_icon"
+  android: true
   ios: true
   image_path: "assets/alliance_icon.png"
+  image_path_ios: "assets/alliance_icon_ios.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

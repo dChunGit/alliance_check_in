@@ -7,8 +7,8 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="alliance_tech_check_in"
-        android:icon="@mipmap/launcher_icon">
+        android:label="Alliance Technologies Check In"
+        android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
