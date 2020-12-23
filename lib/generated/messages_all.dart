@@ -30,6 +30,7 @@ class $en extends MessageLookupByLibrary {
 		"confirmation_error" : MessageLookupByLibrary.simpleMessage("Confirmation code must not be empty"),
 		"password_change_error" : MessageLookupByLibrary.simpleMessage("Error changing password, please try again"),
 		"password_match_error" : MessageLookupByLibrary.simpleMessage("Passwords must match"),
+		"password_constraints_error" : MessageLookupByLibrary.simpleMessage("Password must be at least 8 characters long, include lowercase and uppercase letters, and at least one number"),
 		"login_cred_error" : MessageLookupByLibrary.simpleMessage("Incorrect username or password, please try again"),
 		"generic_login_error" : MessageLookupByLibrary.simpleMessage("Error logging in, please try again"),
 		"first_time_dialog_title" : MessageLookupByLibrary.simpleMessage("Welcome!"),

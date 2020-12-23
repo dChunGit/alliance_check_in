@@ -158,7 +158,9 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
                         onPressed: () {
                           // show dialog
                           widget._authService.signOut().then((value) {
-                            Navigator.pushReplacementNamed(context, loginScreen);
+                            widget.sharedPrefs.clear().then((value) =>
+                                Navigator.pushReplacementNamed(context, loginScreen)
+                            );
                           });
                         }
                       ),
@@ -200,7 +202,7 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
                           return GestureDetector(
                             child: Container(
                               decoration: BoxDecoration(
-                                color: AllianceTheme.of(context).primaryColor,
+                                color: AppColors.backgroundColor,
                               ),
                               child: Row(
                                   mainAxisSize: MainAxisSize.max,

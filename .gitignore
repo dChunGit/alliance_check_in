@@ -42,3 +42,4 @@ app.*.map.json
 
 *google-services.json
 /lib/config/secrets.dart
+/android/app/key.jks

@@ -21,9 +21,9 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> {
   bool _passwordHidden = true;
+  bool _signingIn = false;
 
   TextEditingController _nameTextController = TextEditingController();
-  TextEditingController _emailTextController = TextEditingController();
   TextEditingController _passwordTextController = TextEditingController();
 
   var _formKey = GlobalKey<FormState>();
@@ -104,7 +104,7 @@ class _AuthScreenState extends State<AuthScreen> {
         autocorrect: false,
         controller: _passwordTextController,
         validator: (value) => (value.isEmpty) ? S.of(context).password_error : null,
-        style: Theme.of(context).textTheme.bodyText1.bigger(6).setColor(AppColors.darkTextColor),
+        style: Theme.of(context).textTheme.bodyText1.bigger(4).setColor(AppColors.darkTextColor),
         decoration: InputDecoration(
           contentPadding: EdgeInsets.fromLTRB(10, 15, 10, 15),
           prefixIcon: Icon(
@@ -138,7 +138,15 @@ class _AuthScreenState extends State<AuthScreen> {
             var username = _nameTextController.text.trim();
             var password = _passwordTextController.text.trim();
 
+            setState(() {
+              _signingIn = true;
+            });
+
             widget._authService.signIn(username, password).then((value) {
+              setState(() {
+                _signingIn = false;
+              });
+
               switch (value) {
                 case AuthState.NEW_PASSWORD:
                   Navigator.pushNamed(
@@ -174,13 +182,29 @@ class _AuthScreenState extends State<AuthScreen> {
               color: AppColors.accent,
               borderRadius: BorderRadius.all(Radius.circular(3))
             ),
-            child: Padding(
-              padding: EdgeInsets.all(12),
-              child:Text(
-                S.of(context).login,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.headline5.toLight().bigger(2).toNormal()
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(12),
+                  child:Text(
+                    S.of(context).login,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.headline5.toLight().bigger(2).toNormal()
+                  ),
+                ),
+                Visibility(
+                  visible: _signingIn,
+                  child: SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: Theme(
+                          data: Theme.of(context).copyWith(accentColor: AppColors.darkTextColor),
+                          child: CircularProgressIndicator()
+                      )
+                  ),
+                )
+              ],
             )
           )
         ),

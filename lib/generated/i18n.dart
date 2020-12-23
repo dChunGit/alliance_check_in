@@ -94,6 +94,10 @@ class S {
     return Intl.message("Passwords must match", name: 'password_match_error');
   }
 
+  String get password_constraints_error {
+    return Intl.message("Password must be at least 8 characters long, include lowercase and uppercase letters, and at least one number", name: 'password_constraints_error');
+  }
+
   String get login_cred_error {
     return Intl.message("Incorrect username or password, please try again", name: 'login_cred_error');
   }

@@ -169,11 +169,12 @@ class _PasswordScreenState extends State<PasswordScreen> {
 
   Widget _passwordField() => Padding(
       padding: EdgeInsets.fromLTRB(35, 10, 35, 0),
-      child: TextField(
+      child: TextFormField(
         obscureText: _passwordHidden,
         autocorrect: false,
         controller: _passwordTextController,
-        style: Theme.of(context).textTheme.bodyText1.bigger(6).setColor(AppColors.darkTextColor),
+        validator: (_value) => _validatePassword(_value),
+        style: Theme.of(context).textTheme.bodyText1.bigger(4).setColor(AppColors.darkTextColor),
         decoration: InputDecoration(
           contentPadding: EdgeInsets.fromLTRB(10, 15, 10, 15),
           prefixIcon: Icon(
@@ -181,7 +182,8 @@ class _PasswordScreenState extends State<PasswordScreen> {
               color: AppColors.darkTextColor
           ),
           hintText: S.of(context).new_password_hint,
-          hintStyle: Theme.of(context).textTheme.bodyText1.bigger(6).setColor(AppColors.darkTextColor),
+          hintStyle: Theme.of(context).textTheme.bodyText1.bigger(4).setColor(AppColors.darkTextColor),
+          errorMaxLines: 4,
           filled: true,
           fillColor: AppColors.backgroundColorDark,
           suffixIcon: IconButton(
@@ -205,8 +207,8 @@ class _PasswordScreenState extends State<PasswordScreen> {
         obscureText: _passwordConfirmHidden,
         autocorrect: false,
         controller: _passwordConfirmTextController,
-        validator: (_value) => _validatePassword(_value, _passwordTextController.text.trim()),
-        style: Theme.of(context).textTheme.bodyText1.bigger(6).setColor(AppColors.darkTextColor),
+        validator: (_value) => _validateConfirmPassword(_value, _passwordTextController.text.trim()),
+        style: Theme.of(context).textTheme.bodyText1.bigger(4).setColor(AppColors.darkTextColor),
         decoration: InputDecoration(
           contentPadding: EdgeInsets.fromLTRB(10, 15, 10, 15),
           prefixIcon: Icon(
@@ -214,7 +216,8 @@ class _PasswordScreenState extends State<PasswordScreen> {
               color: AppColors.darkTextColor
           ),
           hintText: S.of(context).confirm_password_hint,
-          hintStyle: Theme.of(context).textTheme.bodyText1.bigger(6).setColor(AppColors.darkTextColor),
+          hintStyle: Theme.of(context).textTheme.bodyText1.bigger(4).setColor(AppColors.darkTextColor),
+          errorMaxLines: 4,
           filled: true,
           fillColor: AppColors.backgroundColorDark,
           suffixIcon: IconButton(
@@ -374,7 +377,19 @@ class _PasswordScreenState extends State<PasswordScreen> {
     );
   }
 
-  String _validatePassword(String value, String compareValue) {
+  String _validatePassword(String value) {
+    var capitals = new RegExp(r"[A-Z]");
+    var lowercase = new RegExp(r"[a-z]");
+    var numbers = new RegExp(r"[0-9]");
+
+    if (value.length < 8 || !value.contains(capitals) || !value.contains(lowercase) || !value.contains(numbers)) {
+      return S.of(context).password_constraints_error;
+    }
+
+    return null;
+  }
+
+  String _validateConfirmPassword(String value, String compareValue) {
     if (value.isEmpty) {
       return S.of(context).password_error;
     }
