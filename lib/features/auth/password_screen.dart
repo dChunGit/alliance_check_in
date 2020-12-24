@@ -45,7 +45,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
   @override
   void initState() {
     super.initState();
-    _isForgotPasswordState = (widget._args.authState == AuthState.FORGOT_PASSWORD);
+    _isForgotPasswordState = (widget._args.authState == AuthState.FORGOT_PASSWORD || (widget._args.authState == AuthState.RESET_PASSWORD));
     if (!_isForgotPasswordState) {
       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
         _showInfoDialog(S.of(context).first_time_dialog_title, S.of(context).first_time_dialog_message);
@@ -83,6 +83,10 @@ class _PasswordScreenState extends State<PasswordScreen> {
   }
 
   Widget _createContainerFlow(bool _isForgotPasswordState) {
+    if (widget._args.authState == AuthState.RESET_PASSWORD) {
+      return _createPasswordFlow(_isForgotPasswordState, _forgotFormKey);
+    }
+
     return AnimatedCrossFade(
       duration: const Duration(milliseconds: 250),
       firstChild: _createUsernameFlow(_isForgotPasswordState),
@@ -97,7 +101,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _titleField(S.of(context).forgotPassword),
+          _titleField(S.of(context).resetPassword),
           _nameField(),
           _nextButton(),
           _backButton(_isForgotPasswordState)
@@ -112,7 +116,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _titleField((_isForgotPasswordState) ? S.of(context).forgotPassword : S.of(context).changePassword),
+          _titleField((_isForgotPasswordState) ? S.of(context).resetPassword : S.of(context).changePassword),
           _passwordField(),
           _passwordConfirmField(),
           (_isForgotPasswordState) ? _confirmationCodeField() : SizedBox(height: 0),
@@ -270,6 +274,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
                   }
                 });
                 break;
+              case AuthState.RESET_PASSWORD:
               case AuthState.FORGOT_PASSWORD:
                 // issue request for confirmation code
                 widget._authService.resetPassword(confirmationCode, password).then((result) {

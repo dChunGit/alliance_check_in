@@ -22,6 +22,7 @@ class $en extends MessageLookupByLibrary {
 		"confirm_code_hint" : MessageLookupByLibrary.simpleMessage("Confirmation code"),
 		"login" : MessageLookupByLibrary.simpleMessage("Login"),
 		"forgotPassword" : MessageLookupByLibrary.simpleMessage("Forgot password"),
+		"resetPassword" : MessageLookupByLibrary.simpleMessage("Reset password"),
 		"changePassword" : MessageLookupByLibrary.simpleMessage("Change password"),
 		"next" : MessageLookupByLibrary.simpleMessage("Next"),
 		"back" : MessageLookupByLibrary.simpleMessage("Back"),

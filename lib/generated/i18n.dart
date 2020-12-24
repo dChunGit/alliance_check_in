@@ -62,6 +62,10 @@ class S {
     return Intl.message("Forgot password", name: 'forgotPassword');
   }
 
+  String get resetPassword {
+    return Intl.message("Reset password", name: 'resetPassword');
+  }
+
   String get changePassword {
     return Intl.message("Change password", name: 'changePassword');
   }

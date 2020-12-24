@@ -18,11 +18,16 @@ void main() async {
 
   await service_locator.init();
   AuthService authService = service_locator.sl.get<AuthService>();
-  var loggedIn = await authService.init();
   Widget firstScreen = AuthScreen();
 
-  if (loggedIn) {
-    firstScreen = SurveyScreen();
+  try {
+    var loggedIn = await authService.init();
+
+    if (loggedIn) {
+      firstScreen = SurveyScreen();
+    }
+  } catch (e) {
+    print(e);
   }
 
   initializeDateFormatting();

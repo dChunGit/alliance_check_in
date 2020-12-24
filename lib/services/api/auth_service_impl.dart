@@ -59,6 +59,10 @@ class AuthServiceImpl implements AuthService {
       print(e);
       return AuthState.NEW_PASSWORD;
     } on CognitoClientException catch (e) {
+      if (e.code == "PasswordResetRequiredException") {
+        return AuthState.RESET_PASSWORD;
+      }
+
       print(e);
       return AuthState.INVALID_LOGIN;
     } catch (e) {
@@ -126,5 +130,6 @@ enum AuthState {
   VALID_LOGIN,
   INVALID_LOGIN,
   FORGOT_PASSWORD,
+  RESET_PASSWORD,
   ERROR
 }

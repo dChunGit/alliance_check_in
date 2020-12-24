@@ -174,7 +174,13 @@ class _AuthScreenState extends State<AuthScreen> {
                     SnackBar(content: Text(S.of(context).generic_login_error))
                   );
                   break;
+                case AuthState.RESET_PASSWORD:
                 case AuthState.FORGOT_PASSWORD:
+                  Navigator.pushNamed(
+                    context,
+                    passwordScreen,
+                    arguments: PasswordScreenArgs(authState: value)
+                  );
                   break;
               }
             });
