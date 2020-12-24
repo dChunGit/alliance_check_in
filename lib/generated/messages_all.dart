@@ -53,7 +53,7 @@ class $en extends MessageLookupByLibrary {
 		"submitting" : MessageLookupByLibrary.simpleMessage("SUBMITTING..."),
 		"moreInfo" : MessageLookupByLibrary.simpleMessage("MORE INFO"),
 		"hideInfo" : MessageLookupByLibrary.simpleMessage("HIDE INFO"),
-		"responseError" : MessageLookupByLibrary.simpleMessage("Response required"),
+		"responseError" : MessageLookupByLibrary.simpleMessage("Response invalid"),
 		"responseEmpty" : MessageLookupByLibrary.simpleMessage("Some responses were left empty"),
 		"submit_error" : MessageLookupByLibrary.simpleMessage("Error submitting responses, please try again"),
 		"submit_complete_title" : MessageLookupByLibrary.simpleMessage("Success!"),

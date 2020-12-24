@@ -48,7 +48,7 @@
   "submitting": "SUBMITTING...",
   "moreInfo": "MORE INFO",
   "hideInfo": "HIDE INFO",
-  "responseError": "Response required",
+  "responseError": "Response invalid",
   "responseEmpty": "Some responses were left empty",
 
   "submit_error": "Error submitting responses, please try again",

@@ -187,7 +187,7 @@ class S {
   }
 
   String get responseError {
-    return Intl.message("Response required", name: 'responseError');
+    return Intl.message("Response invalid", name: 'responseError');
   }
 
   String get responseEmpty {

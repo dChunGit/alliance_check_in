@@ -230,8 +230,21 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
                               //submit here
                               print(_responses);
                               var exposureDateInvalid = _responses[1] && _exposedDate == null;
+                              var tempInvalid = false;
                               var temp = _temperatureController.text.trim();
-                              if (_formKey.currentState.validate() && !exposureDateInvalid && temp.isNotEmpty) {
+                              var tempValidator = double.parse(temp, (value) {
+                                tempInvalid = true;
+                                return null;
+                              });
+
+                              if (tempValidator != null) {
+                                print("Temp is: $tempValidator");
+                                if (tempValidator < 80 || tempValidator > 150) {
+                                  tempInvalid = true;
+                                }
+                              }
+
+                              if (_formKey.currentState.validate() && !exposureDateInvalid && !tempInvalid) {
                                 _tempController.reverse();
                                 _dateController.reverse();
 
@@ -282,13 +295,20 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
                                 }
                               }
                               else {
-                                if (temp.isEmpty) {
+                                if (tempInvalid) {
+                                  print("Temp invalid");
                                   _tempController.forward();
+                                }
+                                else {
+                                  _tempController.reverse();
                                 }
 
                                 if (exposureDateInvalid) {
                                   print("Exposure date invalid $_exposedDate");
                                   _dateController.forward();
+                                }
+                                else {
+                                  _dateController.reverse();
                                 }
                                 Scaffold.of(context).showSnackBar(SnackBar(content: Text(S.of(context).responseEmpty)));
                               }
@@ -347,7 +367,7 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
                       padding: const EdgeInsets.only(right: 8),
                       child: TextFormField(
                         controller: _temperatureController,
-                        keyboardType: TextInputType.number,
+                        keyboardType: TextInputType.numberWithOptions(decimal: true),
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: S.of(context).tempHint,
