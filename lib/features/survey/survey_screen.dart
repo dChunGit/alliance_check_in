@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:alliance_tech_check_in/config/constants.dart';
 import 'package:alliance_tech_check_in/config/enums.dart';
 import 'package:alliance_tech_check_in/config/theme.dart';
@@ -10,6 +12,7 @@ import 'package:alliance_tech_check_in/services/api/api_service.dart';
 import 'package:alliance_tech_check_in/services/api/auth_service.dart';
 import 'package:alliance_tech_check_in/utils/pair.dart';
 import 'package:alliance_tech_check_in/widgets/common_widgets.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:alliance_tech_check_in/utils/extensions/text_ext.dart';
@@ -560,16 +563,42 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
                     ),
                   ),
                   onTap: () {
-                    showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime(2015),
-                      lastDate: DateTime.now(),
-                    ).then((value) {
-                      setState(() {
-                        _exposedDate = value;
+                    if (Platform.isIOS) {
+                      showModalBottomSheet(
+                          context: context,
+                          builder: (BuildContext builder) {
+                            return Container(
+                              height: MediaQuery
+                                  .of(context)
+                                  .copyWith()
+                                  .size
+                                  .height / 3,
+                              child: CupertinoDatePicker(
+                                initialDateTime: DateTime.now(),
+                                maximumDate: DateTime.now(),
+                                mode: CupertinoDatePickerMode.date,
+                                onDateTimeChanged: (DateTime value) {
+                                  setState(() {
+                                    _exposedDate = value;
+                                  });
+                                },
+                              ),
+                            );
+                          }
+                      );
+                    }
+                    else {
+                      showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2015),
+                        lastDate: DateTime.now(),
+                      ).then((value) {
+                        setState(() {
+                          _exposedDate = value;
+                        });
                       });
-                    });
+                    }
                   },
                 ),
               ),
