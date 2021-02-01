@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -15,7 +16,7 @@ import 'api_service.dart';
 class ApiServiceImpl implements ApiService {
   final AuthService _authService;
 
-  final _client = new RetryClient(new http.Client(), retries: 5);
+  final _client = new RetryClient(new http.Client(), retries: 1);
   AwsSigV4Client _awsClient;
 
   ApiServiceImpl()
@@ -49,23 +50,30 @@ class ApiServiceImpl implements ApiService {
   Future<bool> postRequest(Map<String, dynamic> data, String endpoint) async {
     print(jsonEncode(data));
 
-    final token = await _authService.getToken();
+    try {
+      final token = await _authService.getToken();
 
-    final http.Response response = await _client.post(
-        url + endpoint,
-        headers: {
-          HttpHeaders.authorizationHeader: "$token",
-          HttpHeaders.contentTypeHeader: "application/json",
-          "x-api-key": apiKey
-        },
-        body: jsonEncode(data)
-    );
+      final http.Response response = await _client.post(
+          url + endpoint,
+          headers: {
+            HttpHeaders.authorizationHeader: "$token",
+            HttpHeaders.contentTypeHeader: "application/json",
+            "x-api-key": apiKey
+          },
+          body: jsonEncode(data)
+      ).timeout(const Duration(seconds: 5), onTimeout: () {
+        return http.Response("", 503);
+      });
 
-    print("${response.statusCode} : ${response.body}");
+      print("${response.statusCode} : ${response.body}");
 
-    switch (response.statusCode) {
-      case 200: return true;
-      default: return false;
+      switch (response.statusCode) {
+        case 200: return true;
+        default: return false;
+      }
+    }
+    on Exception catch (_) {
+      return false;
     }
   }
 }

@@ -151,11 +151,11 @@ class S {
   }
 
   String get question1Details {
-    return Intl.message("The Centers for Disease Control (CDC) defines close contact as being within approximately 6 feet (2 meters) of a person with COVID-19 for a prolonged period of time (greater than 10–15 minutes). Examples include: caring for, living with a family member/friend or sharing a healthcare waiting area or room, or having direct contact with infectious secretions of a person with COVID-19 (such as being coughed or sneezed on).", name: 'question1Details');
+    return Intl.message("Close contact is defined by CDC as someone who was within 6 feet of an infected person for a cumulative total of 15 minutes or more over a 24-hour period starting from 2 days before illness onset (or, for asymptomatic patients, 2 days prior to test specimen collection) until the time the patient is isolated.", name: 'question1Details');
   }
 
   String get question3Details {
-    return Intl.message("Cough, Fever, Chills, Repeated Shaking with Chills, Shortness of breath, Difficulty breathing, Muscle pains, Headache, Sore throat, New loss of taste or smell", name: 'question3Details');
+    return Intl.message("Cough, Fever, Chills, Shortness of breath, Difficulty breathing, Fatigue, Muscle pains, Headache, Sore throat, New loss of taste or smell", name: 'question3Details');
   }
 
   String get disclaimer {
@@ -195,11 +195,15 @@ class S {
   }
 
   String get responseEmpty {
-    return Intl.message("Some responses were left empty", name: 'responseEmpty');
+    return Intl.message("Some responses were left empty or were invalid", name: 'responseEmpty');
   }
 
   String get submit_error {
     return Intl.message("Error submitting responses, please try again", name: 'submit_error');
+  }
+
+  String get view_disclaimer {
+    return Intl.message("Please read the disclaimer before submitting!", name: 'view_disclaimer');
   }
 
   String get submit_complete_title {

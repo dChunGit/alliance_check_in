@@ -37,8 +37,8 @@
   "question2": "To your knowledge, have you been exposed to the coronavirus which causes COVID-19?",
   "question3": "Are you currently experiencing any of the following symptoms or have you experienced any of them in the last 24 hours?",
 
-  "question1Details": "The Centers for Disease Control (CDC) defines close contact as being within approximately 6 feet (2 meters) of a person with COVID-19 for a prolonged period of time (greater than 10–15 minutes). Examples include: caring for, living with a family member/friend or sharing a healthcare waiting area or room, or having direct contact with infectious secretions of a person with COVID-19 (such as being coughed or sneezed on).",
-  "question3Details": "Cough, Fever, Chills, Repeated Shaking with Chills, Shortness of breath, Difficulty breathing, Muscle pains, Headache, Sore throat, New loss of taste or smell",
+  "question1Details": "Close contact is defined by CDC as someone who was within 6 feet of an infected person for a cumulative total of 15 minutes or more over a 24-hour period starting from 2 days before illness onset (or, for asymptomatic patients, 2 days prior to test specimen collection) until the time the patient is isolated.",
+  "question3Details": "Cough, Fever, Chills, Shortness of breath, Difficulty breathing, Fatigue, Muscle pains, Headache, Sore throat, New loss of taste or smell",
 
   "disclaimer": "By signing in to our facility, you are acknowledging that an inherent risk of exposure to COVID-19 exists in any public space where people are present, and you are voluntarily assuming all related risks and agree not to hold Alliance Technologies, its officers, or agents liable for any illness or injury.",
 
@@ -50,9 +50,10 @@
   "moreInfo": "MORE INFO",
   "hideInfo": "HIDE INFO",
   "responseError": "Response invalid",
-  "responseEmpty": "Some responses were left empty",
+  "responseEmpty": "Some responses were left empty or were invalid",
 
   "submit_error": "Error submitting responses, please try again",
+  "view_disclaimer": "Please read the disclaimer before submitting!",
   "submit_complete_title": "Success!",
   "submit_complete_message": "Check in completed!",
 

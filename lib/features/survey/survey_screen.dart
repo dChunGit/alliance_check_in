@@ -13,6 +13,7 @@ import 'package:alliance_tech_check_in/services/api/auth_service.dart';
 import 'package:alliance_tech_check_in/utils/pair.dart';
 import 'package:alliance_tech_check_in/widgets/common_widgets.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:alliance_tech_check_in/utils/extensions/text_ext.dart';
@@ -20,6 +21,7 @@ import 'package:alliance_tech_check_in/utils/extensions/date_ext.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SurveyScreen extends StatefulWidget {
   final SharedPreferences sharedPrefs;
@@ -35,7 +37,7 @@ class SurveyScreen extends StatefulWidget {
   _SurveyScreenState createState() => _SurveyScreenState();
 }
 
-class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMixin {
+class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMixin, AutomaticKeepAliveClientMixin<SurveyScreen> {
   TextEditingController _firstNameController;
   TextEditingController _lastNameController;
   TextEditingController _temperatureController = TextEditingController();
@@ -192,16 +194,16 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
                               _createHeader(S.of(context).checkIn(DateTime.now().prettyPrint())),
                               _createPersonalInfo(),
                               SizedBox(height: 16),
-                              _createQuestion(0, S.of(context).question1, info: S.of(context).question1Details),
+                              _createQuestion(0, S.of(context).question1, info: S.of(context).question1Details, url: closeContactUrl),
                               _createQuestion(1, S.of(context).question2, showDatePicker: true, dateRequired: true),
-                              _createQuestion(2, S.of(context).question3, info: S.of(context).question3Details, showOnFirst: true),
+                              _createQuestion(2, S.of(context).question3, info: S.of(context).question3Details, showOnFirst: true, url: symptomsUrl),
                               _createDisclaimer()
                             ],
                           ),
                         ),
                       ),
                       Builder(
-                        builder: (context) {
+                        builder: (BuildContext context) {
                           return GestureDetector(
                             child: Container(
                               decoration: BoxDecoration(
@@ -233,26 +235,20 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
                               //submit here
                               print(_responses);
                               var exposureDateInvalid = _responses[1] && _exposedDate == null;
-                              var tempInvalid = false;
                               var temp = _temperatureController.text.trim();
                               var tempValidator = double.parse(temp, (value) {
-                                tempInvalid = true;
                                 return null;
                               });
-
-                              if (tempValidator != null) {
-                                print("Temp is: $tempValidator");
-                                if (tempValidator < 80 || tempValidator > 150) {
-                                  tempInvalid = true;
-                                }
-                              }
+                              var tempInvalid = tempValidator == null;
 
                               if (_formKey.currentState.validate() && !exposureDateInvalid && !tempInvalid) {
+                                print("Temp is: $tempValidator");
+
                                 _tempController.reverse();
                                 _dateController.reverse();
 
                                 var maxScroll = _scrollController.position.maxScrollExtent;
-                                if (maxScroll - _scrollController.position.pixels <= 25) {
+                                if (maxScroll - _scrollController.position.pixels <= 75) {
                                   var firstname = _firstNameController.text.trim();
                                   var lastname = _lastNameController.text.trim();
 
@@ -294,6 +290,9 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
                                   });
                                 }
                                 else {
+                                  Scaffold.of(context).showSnackBar(
+                                      SnackBar(content: Text(S.of(context).view_disclaimer), duration: const Duration(seconds: 1))
+                                  );
                                   _scrollController.animateTo(_scrollController.position.maxScrollExtent, duration: _animationDuration, curve: Curves.easeOut);
                                 }
                               }
@@ -407,7 +406,7 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
     );
   }
 
-  Widget _createQuestion(int index, String text, {String info = "", bool showOnFirst = false, bool showDatePicker = false, bool dateRequired = false}) {
+  Widget _createQuestion(int index, String text, {String info = "", String url = "", bool showOnFirst = false, bool showDatePicker = false, bool dateRequired = false}) {
     _responses.putIfAbsent(index, () => true);
     _moreInfoState.putIfAbsent(index, () => showOnFirst ? InfoState.FIRST : InfoState.HIDDEN);
 
@@ -425,7 +424,7 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
               Flexible(
                   child: Padding(
                     padding: const EdgeInsets.only(right: 32),
-                    child: _createQuestionDetails(index, text, info, showDatePicker),
+                    child: _createQuestionDetails(index, text, info, showDatePicker, url: url),
                   )
               ),
               ToggleSelectionButton(_responses[index], (value) {
@@ -443,7 +442,7 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
     );
   }
 
-  Widget _createMoreInfo(int index, {String info = ""}) {
+  Widget _createMoreInfo(int index, {String info = "", String url = ""}) {
     var controller = AnimationController(
       duration: _animationDuration,
       vsync: this,
@@ -483,10 +482,34 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
         ) : SizedBox(height: 0),
         SizeTransition(
             sizeFactor: _infoAnimationControllers[index].second,
-            child: Text(
-              info,
-              style: Theme.of(context).textTheme.bodyText1.bigger(2),
-            )
+            child: RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan (
+                    text: info,
+                    style: Theme.of(context).textTheme.bodyText1.bigger(2).setColor(AppColors.primaryColor).copyWith(
+                      decoration: TextDecoration.underline
+                    ),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () async {
+                        if (await canLaunch(url)) {
+                          launch(url);
+                        }
+                      }
+                  ),
+                  WidgetSpan(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 4),
+                        child: Icon(
+                          Icons.link,
+                          color: AppColors.primaryColor,
+                          size: 13,
+                        ),
+                      ),
+                  )
+                ],
+              ),
+            ),
         )
       ],
     );
@@ -524,7 +547,7 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
     );
   }
 
-  Widget _createQuestionDetails(int index, String text, String info, bool showDatePicker) {
+  Widget _createQuestionDetails(int index, String text, String info, bool showDatePicker, {String url = ""}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -532,7 +555,7 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
           text,
           style: Theme.of(context).textTheme.bodyText1.bigger(6).toDark()
         ),
-        _createMoreInfo(index, info: info),
+        _createMoreInfo(index, info: info, url: url),
         SizeTransition(
           sizeFactor: _exposureAnimation,
           child: _createDatePicker(showDatePicker)
@@ -665,4 +688,7 @@ class _SurveyScreenState extends State<SurveyScreen> with TickerProviderStateMix
 
     return null;
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
