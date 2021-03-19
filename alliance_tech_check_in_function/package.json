@@ -1,0 +1,16 @@
+{
+  "name": "alliance_tech_check_in_function",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "google-spreadsheet": "^3.0.14",
+    "moment-timezone": "^0.5.32",
+    "timezone": "^1.0.23"
+  }
+}
