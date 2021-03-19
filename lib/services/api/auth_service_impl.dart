@@ -24,7 +24,6 @@ class AuthServiceImpl implements AuthService {
 
   Future<bool> init() async {
     _userPool.storage = AuthStorageService(_sharedPreferences);
-
     _cognitoUser = await _userPool.getCurrentUser();
     if (_cognitoUser == null) {
       return false;
